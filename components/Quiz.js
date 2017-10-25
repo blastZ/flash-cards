@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card, Button, FormInput, FormValidationMessage } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { red, yellow, green } from '../utils/color';
+import { clearLocalNotification, setLocalNotification } from '../utils/notification';
 
 class Quiz extends Component {
   state = {
@@ -41,10 +42,28 @@ class Quiz extends Component {
     }
   }
 
+  clickRestart = () => {
+    this.setState({
+      showAnswer: false,
+      showResult: false,
+      currentIndex: 0,
+      correct: 0,
+    })
+  }
+
+  clickExit = () => {
+    this.props.navigation.goBack();
+  }
+
   shouldShowAnswer = () => {
     this.setState({
       showAnswer: !this.state.showAnswer
     })
+  }
+
+  componentDidMount() {
+    clearLocalNotification()
+      .then(setLocalNotification)
   }
 
   render() {
@@ -70,20 +89,35 @@ class Quiz extends Component {
             color={red}
             title={`${this.state.showAnswer ? 'Question' : 'Answer'}`} />}
         </View>
-        <View style={{marginBottom: 50}}>
-          <View>
-            <Button
-              backgroundColor={green}
-              onPress={this.clickCorrect}
-              title="Correct" />
+        {!this.state.showResult
+          ? <View style={{marginBottom: 50}}>
+            <View>
+              <Button
+                backgroundColor={green}
+                onPress={this.clickCorrect}
+                title="Correct" />
+            </View>
+            <View style={{marginTop: 10}}>
+              <Button
+                backgroundColor={red}
+                onPress={this.clickIncorrect}
+                title="Incorrect" />
+            </View>
           </View>
-          <View style={{marginTop: 10}}>
-            <Button
-              backgroundColor={red}
-              onPress={this.clickIncorrect}
-              title="Incorrect" />
-          </View>
-        </View>
+          : <View style={{marginBottom: 50}}>
+            <View>
+              <Button
+                backgroundColor={green}
+                onPress={this.clickRestart}
+                title="Restart" />
+            </View>
+            <View style={{marginTop: 10}}>
+              <Button
+                backgroundColor={red}
+                onPress={this.clickExit}
+                title="Exit" />
+            </View>
+          </View>}
       </View>
     )
   }

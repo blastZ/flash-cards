@@ -5,11 +5,13 @@ import NewDeck from './components/NewDeck';
 import { TabNavigator, StackNavigator } from 'react-navigation';
 import { Constants } from 'expo';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './reducers/rootReducer';
 import DeckDetail from './components/DeckDetail';
 import AddCard from './components/AddCard';
 import Quiz from './components/Quiz';
+import appMiddleware from './middlewares/app_middleware';
+import { setLocalNotification } from './utils/notification';
 
 const CustomStatusBar = ({ backgroundColor, ...props }) => (
   <View style={{backgroundColor, height: Constants.statusBarHeight}}>
@@ -69,8 +71,12 @@ const MainNavigation = StackNavigator({
 })
 
 export default class App extends React.Component {
+  componentDidMount() {
+      setLocalNotification();
+  }
+
   render() {
-    const store = createStore(rootReducer);
+    const store = createStore(rootReducer, applyMiddleware(appMiddleware));
     return (
       <Provider store={store}>
         <View style={styles.container}>

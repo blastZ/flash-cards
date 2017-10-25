@@ -19,16 +19,19 @@ class NewDeck extends Component {
   addDeck = () => {
     if(this.state.title.trim() !== '') {
       this.props.dispatch(addNewDeck(this.state.title.trim()));
-      this.props.navigation.navigate('DeckDetail', {
-        deck: {
-          title: this.state.title.trim(),
-          questions: []
-        }
-      });
-      this.setState({
-        title: '',
-        showErrorMessage: false
-      })
+      setTimeout(() => {
+        this.props.navigation.navigate('DeckDetail', {
+          deck: {
+            title: this.state.title.trim(),
+            questions: []
+          },
+          index: this.props.deckList.length - 1
+        });
+        this.setState({
+          title: '',
+          showErrorMessage: false
+        })
+      }, 300)
       Keyboard.dismiss();
     } else {
       this.setState({
@@ -64,4 +67,8 @@ const styles = StyleSheet.create({
   }
 })
 
-export default connect()(NewDeck);
+const mapStateToProps = ({ appReducer }) => ({
+  deckList: appReducer.deckList
+})
+
+export default connect(mapStateToProps)(NewDeck);

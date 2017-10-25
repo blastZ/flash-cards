@@ -1,54 +1,42 @@
-import { ADD_NEW_DECK, ADD_NEW_CARD } from '../actions/app_action';
+import { ADD_NEW_DECK, ADD_NEW_CARD, GET_DECK_LIST } from '../actions/app_action';
+import { AsyncStorage } from 'react-native';
 
 const initState = {
-  deckList: [
-    {
-      title: 'React',
-      questions: [
-        {
-          question: 'What is React?',
-          answer: 'A library for managing user interfaces'
-        },
-        {
-          question: 'Where do you make Ajax requests in React?',
-          answer: 'The componentDidMount lifecycle event'
-        }
-      ]
-    },
-    {
-      title: 'JavaScript',
-      questions: [
-        {
-          question: 'What is a closure?',
-          answer: 'The combination of a function and the lexical environment within which that function was declared.'
-        }
-      ]
-    },
-  ],
+  deckList: [],
 };
 
 const appReducer = (state=initState, action) => {
-  const { deck, title, question, answer } = action;
+  const { deck, title, question, answer, deckList } = action;
   switch (action.type) {
     case ADD_NEW_DECK: {
+      const newDeckList = state.deckList.concat([deck]);
+      AsyncStorage.setItem('DECK_LIST', JSON.stringify(newDeckList));
       return {
         ...state,
-        deckList: state.deckList.concat([deck])
+        deckList: newDeckList
       }
     }
     case ADD_NEW_CARD: {
+      const newDeckList = state.deckList.reduce((accumulator, deck) => {
+        if(deck.title === title) {
+          return accumulator.concat([{
+            title: deck.title,
+            questions: deck.questions.concat([{question, answer}])
+          }]);
+        } else {
+          return accumulator.concat([deck]);
+        }
+      }, []);
+      AsyncStorage.setItem('DECK_LIST', JSON.stringify(newDeckList));
       return {
         ...state,
-        deckList: state.deckList.reduce((accumulator, deck) => {
-          if(deck.title === title) {
-            return accumulator.concat([{
-              title: deck.title,
-              questions: deck.questions.concat([{question, answer}])
-            }]);
-          } else {
-            return accumulator.concat([deck]);
-          }
-        }, [])
+        deckList: newDeckList
+      }
+    }
+    case GET_DECK_LIST: {
+      return {
+        ...state,
+        deckList
       }
     }
     default: return state;

@@ -29,17 +29,18 @@ class DeckDetail extends Component {
                 backgroundColor={yellow}
                 title='Add Card' />
             </View>
-            <View style={{marginTop: 10}}>
-              <Button
-                onPress={() => this.props.navigation.navigate(
-                  'Quiz',
-                  {
-                    index
-                  }
-                )}
-                backgroundColor={yellow}
-                title='Start Quiz'/>
-            </View>
+            {this.props.deckList[index].questions.length > 0 &&
+              <View style={{marginTop: 10}}>
+                <Button
+                  onPress={() => this.props.navigation.navigate(
+                    'Quiz',
+                    {
+                      index
+                    }
+                  )}
+                  backgroundColor={yellow}
+                  title='Start Quiz'/>
+              </View>}
           </View>
         </Card>
       </View>

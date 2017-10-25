@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Card } from 'react-native-elements';
+import { getDeckList } from '../actions/app_action';
 
 class DeckList extends Component {
+  componentWillMount() {
+    this.props.dispatch(getDeckList());
+  }
   render() {
     return (
       this.props.deckList.length > 0
